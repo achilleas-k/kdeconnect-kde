@@ -72,7 +72,7 @@ void LanLinkProvider::onStart()
     Q_ASSERT(buildSucceed);
 
     mTcpPort = port;
-    while (!mTcpServer->listen(QHostAddress, mTcpPort)) {
+    while (!mTcpServer->listen(QHostAddress::Any, mTcpPort)) {
         mTcpPort++;
     }
 
@@ -93,12 +93,11 @@ void LanLinkProvider::onNetworkChange(QNetworkSession::State state)
     if (!mTcpServer->isListening()) {
         return;
     }
+
     NetworkPackage np("");
     NetworkPackage::createIdentityPackage(&np);
     np.set("tcpPort", mTcpPort);
-    mUdpSocket.writeDatagram(np.serialize(), QHostAddress("10.8.0.100"), port);
-    kDebug(debugArea()) << "TCP Server address " << mTcpServer->serverAddress();
-    kDebug(debugArea()) << "UDP Server address " << mUdpServer->localAddress();
+    mUdpSocket.writeDatagram(np.serialize(), QHostAddress("255.255.255.255"), port);
 }
 
 //I'm the existing device, a new device is kindly introducing itself (I will create a TcpSocket)

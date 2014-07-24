@@ -28,7 +28,7 @@
 #include "../linkprovider.h"
 #include "uploadjob.h"
 #include "downloadjob.h"
-#include "socketlinereader.h"
+#include "../lan/socketlinereader.h"
 
 VpnDeviceLink::VpnDeviceLink(const QString& d, LinkProvider* a, QTcpSocket* socket)
     : DeviceLink(d, a)

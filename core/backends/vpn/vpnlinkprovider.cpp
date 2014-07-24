@@ -72,7 +72,7 @@ void VpnLinkProvider::onStart()
     Q_ASSERT(buildSucceed);
 
     mTcpPort = port;
-    while (!mTcpServer->listen(QHostAddress, mTcpPort)) {
+    while (!mTcpServer->listen(QHostAddress::Any, mTcpPort)) {
         mTcpPort++;
     }
 
@@ -97,7 +97,7 @@ void VpnLinkProvider::onNetworkChange(QNetworkSession::State state)
     NetworkPackage np("");
     NetworkPackage::createIdentityPackage(&np);
     np.set("tcpPort", mTcpPort);
-    mUdpSocket.writeDatagram(np.serialize(), QHostAddress("10.8.0.100"), port);
+    mUdpSocket.writeDatagram(np.serialize(), QHostAddress("10.8.0.101"), port);
     kDebug(debugArea()) << "TCP Server address " << mTcpServer->serverAddress();
     kDebug(debugArea()) << "UDP Server address " << mUdpServer->localAddress();
 }

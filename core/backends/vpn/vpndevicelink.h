@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LANDEVICELINK_H
-#define LANDEVICELINK_H
+#ifndef VPNDEVICELINK_H
+#define VPNDEVICELINK_H
 
 #include <QObject>
 #include <QString>
@@ -29,13 +29,13 @@
 
 class SocketLineReader;
 
-class LanDeviceLink
+class VpnDeviceLink
     : public DeviceLink
 {
     Q_OBJECT
 
 public:
-    LanDeviceLink(const QString& d, LinkProvider* a, QTcpSocket* socket);
+    VpnDeviceLink(const QString& d, LinkProvider* a, QTcpSocket* socket);
 
     bool sendPackage(NetworkPackage& np);
     bool sendPackageEncrypted(QCA::PublicKey& key, NetworkPackage& np);

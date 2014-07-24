@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "landevicelink.h"
+#include "vpndevicelink.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -30,7 +30,7 @@
 #include "downloadjob.h"
 #include "socketlinereader.h"
 
-LanDeviceLink::LanDeviceLink(const QString& d, LinkProvider* a, QTcpSocket* socket)
+VpnDeviceLink::VpnDeviceLink(const QString& d, LinkProvider* a, QTcpSocket* socket)
     : DeviceLink(d, a)
     , mSocketLineReader(new SocketLineReader(socket, a))
 {
@@ -40,7 +40,7 @@ LanDeviceLink::LanDeviceLink(const QString& d, LinkProvider* a, QTcpSocket* sock
             this, SLOT(dataReceived()));
 }
 
-bool LanDeviceLink::sendPackageEncrypted(QCA::PublicKey& key, NetworkPackage& np)
+bool VpnDeviceLink::sendPackageEncrypted(QCA::PublicKey& key, NetworkPackage& np)
 {
     if (np.hasPayload()) {
          UploadJob* job = new UploadJob(np.payload());
@@ -58,7 +58,7 @@ bool LanDeviceLink::sendPackageEncrypted(QCA::PublicKey& key, NetworkPackage& np
     return (written != -1);
 }
 
-bool LanDeviceLink::sendPackage(NetworkPackage& np)
+bool VpnDeviceLink::sendPackage(NetworkPackage& np)
 {
     if (np.hasPayload()) {
          UploadJob* job = new UploadJob(np.payload());
@@ -73,14 +73,14 @@ bool LanDeviceLink::sendPackage(NetworkPackage& np)
     return (written != -1);
 }
 
-void LanDeviceLink::dataReceived()
+void VpnDeviceLink::dataReceived()
 {
 
     if (mSocketLineReader->bytesAvailable() == 0) return;
 
     const QByteArray package = mSocketLineReader->readLine();
 
-    //kDebug(debugArea()) << "LanDeviceLink dataReceived" << package;
+    //kDebug(debugArea()) << "VpnDeviceLink dataReceived" << package;
 
     NetworkPackage unserialized(QString::null);
     NetworkPackage::unserialize(package, &unserialized);

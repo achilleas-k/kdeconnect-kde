@@ -29,7 +29,7 @@
 
 /*
  * Encapsulates a QTcpSocket and implements the same methods of its API that are
- * used by LanDeviceLink, but readyRead is emitted only when a newline is found.
+ * used by VpnDeviceLink, but readyRead is emitted only when a newline is found.
  */
 class SocketLineReader
     : public QObject

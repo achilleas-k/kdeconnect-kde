@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "lanlinkprovider.h"
+#include "vpnlinkprovider.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -30,9 +30,9 @@
 #include <QUdpSocket>
 
 #include "../../kdebugnamespace.h"
-#include "landevicelink.h"
+#include "vpndevicelink.h"
 
-void LanLinkProvider::configureSocket(QTcpSocket* socket)
+void VpnLinkProvider::configureSocket(QTcpSocket* socket)
 {
     int fd = socket->socketDescriptor();
     char enableKeepAlive = 1;
@@ -55,7 +55,7 @@ void LanLinkProvider::configureSocket(QTcpSocket* socket)
 
 }
 
-LanLinkProvider::LanLinkProvider()
+VpnLinkProvider::VpnLinkProvider()
 {
 
     mUdpServer = new QUdpSocket(this);
@@ -66,7 +66,7 @@ LanLinkProvider::LanLinkProvider()
 
 }
 
-void LanLinkProvider::onStart()
+void VpnLinkProvider::onStart()
 {
     bool buildSucceed = mUdpServer->bind(QHostAddress::Any, port, QUdpSocket::ShareAddress);
     Q_ASSERT(buildSucceed);
@@ -79,14 +79,14 @@ void LanLinkProvider::onStart()
     onNetworkChange(QNetworkSession::Connected);
 }
 
-void LanLinkProvider::onStop()
+void VpnLinkProvider::onStop()
 {
     mUdpServer->close();
     mTcpServer->close();
 }
 
 //I'm in a new network, let's be polite and introduce myself
-void LanLinkProvider::onNetworkChange(QNetworkSession::State state)
+void VpnLinkProvider::onNetworkChange(QNetworkSession::State state)
 {
     Q_UNUSED(state);
 
@@ -102,7 +102,7 @@ void LanLinkProvider::onNetworkChange(QNetworkSession::State state)
 }
 
 //I'm the existing device, a new device is kindly introducing itself (I will create a TcpSocket)
-void LanLinkProvider::newUdpConnection()
+void VpnLinkProvider::newUdpConnection()
 {
     while (mUdpServer->hasPendingDatagrams()) {
         QByteArray datagram;
@@ -145,7 +145,7 @@ void LanLinkProvider::newUdpConnection()
     }
 }
 
-void LanLinkProvider::connectError()
+void VpnLinkProvider::connectError()
 {
     QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
 
@@ -162,7 +162,7 @@ void LanLinkProvider::connectError()
     receivedIdentityPackages.remove(socket);
 }
 
-void LanLinkProvider::connected()
+void VpnLinkProvider::connected()
 {
 
     QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
@@ -176,7 +176,7 @@ void LanLinkProvider::connected()
     const QString& deviceId = receivedPackage->get<QString>("deviceId");
     //kDebug(debugArea()) << "Connected" << socket->isWritable();
 
-    LanDeviceLink* deviceLink = new LanDeviceLink(deviceId, this, socket);
+    VpnDeviceLink* deviceLink = new VpnDeviceLink(deviceId, this, socket);
 
     NetworkPackage np2("");
     NetworkPackage::createIdentityPackage(&np2);
@@ -219,9 +219,9 @@ void LanLinkProvider::connected()
 }
 
 //I'm the new device and this is the answer to my UDP introduction (no data received yet)
-void LanLinkProvider::newConnection()
+void VpnLinkProvider::newConnection()
 {
-    //kDebug(debugArea()) << "LanLinkProvider newConnection";
+    //kDebug(debugArea()) << "VpnLinkProvider newConnection";
 
     while(mTcpServer->hasPendingConnections()) {
         QTcpSocket* socket = mTcpServer->nextPendingConnection();
@@ -235,30 +235,30 @@ void LanLinkProvider::newConnection()
     NetworkPackage::createIdentityPackage(&np);
     int written = socket->write(np.serialize());
 
-    kDebug(debugArea()) << "LanLinkProvider sent package." << written << " bytes written, waiting for reply";
+    kDebug(debugArea()) << "VpnLinkProvider sent package." << written << " bytes written, waiting for reply";
 */
 }
 
 //I'm the new device and this is the answer to my UDP introduction (data received)
-void LanLinkProvider::dataReceived()
+void VpnLinkProvider::dataReceived()
 {
     QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
     configureSocket(socket);
 
     const QByteArray data = socket->readLine();
 
-    //kDebug(debugArea()) << "LanLinkProvider received reply:" << data;
+    //kDebug(debugArea()) << "VpnLinkProvider received reply:" << data;
 
     NetworkPackage np("");
     bool success = NetworkPackage::unserialize(data, &np);
 
     if (!success || np.type() != PACKAGE_TYPE_IDENTITY) {
-        kDebug(debugArea()) << "LanLinkProvider/newConnection: Not an identification package (wuh?)";
+        kDebug(debugArea()) << "VpnLinkProvider/newConnection: Not an identification package (wuh?)";
         return;
     }
 
     const QString& deviceId = np.get<QString>("deviceId");
-    LanDeviceLink* deviceLink = new LanDeviceLink(deviceId, this, socket);
+    VpnDeviceLink* deviceLink = new VpnDeviceLink(deviceId, this, socket);
 
     //kDebug(debugArea()) << "Handshaking done (i'm the new device)";
 
@@ -281,7 +281,7 @@ void LanLinkProvider::dataReceived()
     disconnect(socket,SIGNAL(readyRead()),this,SLOT(dataReceived()));
 }
 
-void LanLinkProvider::deviceLinkDestroyed(QObject* destroyedDeviceLink)
+void VpnLinkProvider::deviceLinkDestroyed(QObject* destroyedDeviceLink)
 {
     //kDebug(debugArea()) << "deviceLinkDestroyed";
     const QString id = destroyedDeviceLink->property("deviceId").toString();
@@ -292,7 +292,7 @@ void LanLinkProvider::deviceLinkDestroyed(QObject* destroyedDeviceLink)
 
 }
 
-LanLinkProvider::~LanLinkProvider()
+VpnLinkProvider::~VpnLinkProvider()
 {
 
 }

@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LANLINKPROVIDER_H
-#define LANLINKPROVIDER_H
+#ifndef VPNLINKPROVIDER_H
+#define VPNLINKPROVIDER_H
 
 #include <QObject>
 #include <QTcpServer>
@@ -28,16 +28,16 @@
 #include "../linkprovider.h"
 #include "netaddress.h"
 
-class LanLinkProvider
+class VpnLinkProvider
     : public LinkProvider
 {
     Q_OBJECT
 
 public:
-    LanLinkProvider();
-    ~LanLinkProvider();
+    VpnLinkProvider();
+    ~VpnLinkProvider();
 
-    QString name() { return "LanLinkProvider"; }
+    QString name() { return "VpnLinkProvider"; }
     int priority() { return PRIORITY_HIGH; }
 
 public Q_SLOTS:

@@ -2,11 +2,11 @@
 set(kded_kdeconnect_SRCS
     ${kded_kdeconnect_SRCS}
 
-    backends/lan/lanlinkprovider.cpp
-    backends/lan/landevicelink.cpp
-    backends/lan/uploadjob.cpp
-    backends/lan/downloadjob.cpp
-    backends/lan/socketlinereader.cpp
+    backends/vpn/vpnlinkprovider.cpp
+    backends/vpn/vpndevicelink.cpp
+    backends/vpn/uploadjob.cpp
+    backends/vpn/downloadjob.cpp
+    backends/vpn/socketlinereader.cpp
 
     PARENT_SCOPE
 )

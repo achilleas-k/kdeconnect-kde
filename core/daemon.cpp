@@ -35,6 +35,7 @@
 #include "kdebugnamespace.h"
 #include "networkpackage.h"
 #include "backends/lan/lanlinkprovider.h"
+#include "backends/vpn/vpnlinkprovider.h"
 #include "backends/loopback/loopbacklinkprovider.h"
 #include "device.h"
 #include "networkpackage.h"
@@ -121,6 +122,7 @@ Daemon::Daemon(QObject *parent)
 
     //Load backends (hardcoded by now, should be plugins in a future)
     d->mLinkProviders.insert(new LanLinkProvider());
+    d->mLinkProviders.insert(new VpnLinkProvider());
     //d->mLinkProviders.insert(new LoopbackLinkProvider());
 
     //Read remebered paired devices

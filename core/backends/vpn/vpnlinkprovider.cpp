@@ -93,6 +93,7 @@ void VpnLinkProvider::onNetworkChange(QNetworkSession::State state)
     if (!mTcpServer->isListening()) {
         return;
     }
+
     NetworkPackage np("");
     NetworkPackage::createIdentityPackage(&np);
     np.set("tcpPort", mTcpPort);
